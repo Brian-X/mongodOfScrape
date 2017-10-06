@@ -161,6 +161,8 @@ app.post("/articles/:id", function(req, res) {
     }
   });
 });
+
+app.listen(port)
   // save the new note that gets posted to the Notes collection
 
   // then find an article from the req.params.id
