@@ -27,6 +27,9 @@ mongoose.Promise = Promise;
 // Initialize Express
 var app = express();
 
+var port = process.env.PORT || 3075;
+const dbConnectString = process.env.MONGODB_URI || "mongodb://localhost/scraper"; 
+
 // Use morgan and body parser with our app
 app.use(logger("dev"));
 app.use(bodyParser.urlencoded({
@@ -40,9 +43,8 @@ app.engine("handlebars", exphbs({ defaultLayout: "index" }));
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/NYTtable");
+mongoose.connect(dbConnectString);
 var db = mongoose.connection;
-const dbConnectString = process.env.MONGODB_URI || "mongodb://localhost/scraper"; 
 // Database configuration with mongoose
 mongoose.connect(dbConnectString, function(error){
     if (error) throw error;
@@ -166,8 +168,8 @@ app.post("/articles/:id", function(req, res) {
   // and update it's "note" property with the _id of the new note
 
 
-var port = process.env.PORT || 3095;
+
 // Listen on port 3095
-app.listen(3095, function() {
-  console.log("App running on port 3095!");
-});
+// app.listen(3085, function() {
+//   console.log("App running on port 3085!");
+// });
