@@ -166,7 +166,7 @@ app.post("/articles/:id", function(req, res) {
   // and update it's "note" property with the _id of the new note
 
 
-
+var port = process.env.PORT || 3095;
 // Listen on port 3095
 app.listen(3095, function() {
   console.log("App running on port 3095!");
