@@ -27,7 +27,7 @@ mongoose.Promise = Promise;
 // Initialize Express
 var app = express();
 
-var port = process.env.PORT || 3075;
+var port = process.env.PORT || 3045;
 const dbConnectString = process.env.MONGODB_URI || "mongodb://localhost/scraper"; 
 
 // Use morgan and body parser with our app
@@ -72,14 +72,12 @@ app.get("/scrape", function(req, res) {
     var $ = cheerio.load(html);
     // Now, we grab every h2 within an article tag, and do the following:
     $("article h2").each(function(i, element) {
-
       // Add the text and href of every link, and save them as properties of the result object
       var result = {
         "title"  : $(this).children("a").text(),
         "link"   : $(this).children("a").attr("href"),
         "summary": $(this).parent("article").children(".summary").text()
       };
-
       // Using our Article model, create a new entry
       // This effectively passes the result object to the entry (and the title and link)
       var entry = new Article(result);
@@ -122,8 +120,8 @@ app.get("/articles", function(req, res) {
 
 // Create a new note or replace an existing note
 app.get("/articles/:id", function(req, res) {
-  Article.find({_id: req.params.id }) 
-      .populate("Note")
+  Article.findOne({"_id": req.params.id }) 
+      .populate("note")
       .exec(function(error, found) {
         if (error) {
           return handleError(error);
@@ -136,7 +134,8 @@ app.get("/articles/:id", function(req, res) {
   // TODO
   // ====
 app.post("/articles/:id", function(req, res) {
-
+  // console.log(req.body);
+  // console.log(req.params.id);
   var newNote = new Note(req.body);
   // Save the new note to mongoose
   newNote.save(function(error, doc) {
@@ -146,12 +145,13 @@ app.post("/articles/:id", function(req, res) {
     }
     // Otherwise
     else {
+      console.log("article");
       // Find our user and push the new note id into the User's notes array
       Article.findOneAndUpdate({"_id": req.params.id}, { "note": doc._id })
         // Send any errors to the browser
-        .exec(function(err, doc) {
-          if (err) {
-            res.send(err);
+        .exec(function(error, doc) {
+          if (error) {
+            res.send(error);
           }
           // Or send the newdoc to the browser
           else {
